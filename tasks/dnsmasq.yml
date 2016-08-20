@@ -1,0 +1,60 @@
+---
+- name: update apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+
+- name: install dnsmasq
+  package:
+    name: dnsmasq
+    state: present
+
+- name: ensure dnsmasq.d directory
+  file:
+    state: directory
+    dest: /etc/dnsmasq.d
+
+- name: set dnsmasq configuration
+  lineinfile:
+    dest: /etc/dnsmasq.conf
+    regexp: ^conf-dir=
+    line: conf-dir=/etc/dnsmasq.d
+    state: present
+  notify: restart dnsmasq
+
+- name: set consul dns server address
+  set_fact:
+    consul_dns_ip: "{{ consul_config.addresses.dns }}"
+  when: consul_config.addresses.dns is defined
+
+- name: set consul dns server port
+  set_fact:
+    consul_dns_port: "{{ consuL_config.ports.dns }}"
+  when: consul_conf.ports.dns is defined
+
+- name: configure dnsmasq for consul domain
+  copy:
+    content: "server=/{{ consul_config.domain | default('consul') }}/{{ consul_dns_ip | default(consul_config.client_addr) }}#{{ consul_dns_port | default(8600) }}"
+    dest: /etc/dnsmasq.d/10-consul
+  notify: restart dnsmasq
+
+- name: create dnsmasq upstream resolvers file
+  template:
+    src: "{{ consul_dnsmasq_upstream_template }}"
+    dest: /etc/dnsmasq_resolv.conf
+  when: "{{ consul_dnsmasq_upstream_servers | length > 0 }}"
+  notify: restart dnsmasq
+
+- name: configure dnsmasq for upstream resolvers
+  copy:
+    content: "resolv-file=/etc/dnsmasq_resolv.conf"
+    dest: /etc/dnsmasq.d/20-upstream-servers
+  when: "{{ consul_dnsmasq_upstream_servers | length > 0 }}"
+  notify: restart dnsmasq
+
+- name: start dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes

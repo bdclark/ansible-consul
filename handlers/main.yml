@@ -1,0 +1,26 @@
+---
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart consul
+  service:
+    name: consul
+    state: restarted
+  when: consul_service_managed and consul_service_restart_on_update and consul_service_state == 'started'
+
+- name: reload consul
+  service:
+    name: consul
+    state: reloaded
+  when: consul_service_managed and consul_service_state == 'started'
+
+- name: restart dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted
+  when: not (ansible_os_family == 'RedHat' and consul_dnsmasq_networkmanager_enabled)
+
+- name: restart networkmanager
+  service:
+    name: NetworkManager
+    state: restarted

@@ -1,0 +1,69 @@
+---
+consul_version: 0.6.4
+consul_zip: "consul_{{ consul_version }}_linux_amd64.zip"
+consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_zip }}"
+consul_zip_checksum: "{{ consul_checksums[consul_zip] }}"
+consul_zip_dir: /tmp  # path to download consul zip file before extraction
+
+consul_bin_dir: /usr/local/bin          # dir to extract consul binary
+consul_conf_dir: /etc/consul            # base dir for consul config files
+consul_data_dir: /var/lib/consul        # consul data dir
+consul_log_dir: /var/log/consul         # log dir only used with sysvinit
+
+consul_user_managed: true               # if true will create consul user/group
+consul_user: consul
+consul_group: consul
+
+consul_service_managed: true            # create/start/reload/restart service
+consul_service_enabled: true            # whether service is enabled/disabled
+consul_service_state: started           # desired state of consul service
+consul_service_restart_on_update: true  # restart on config file/service changes
+consul_service_stop_signal: INT         # signal to send when service stops
+
+# auto-detection of consul bind/client addresses based on interface
+# for consul_auto_*_iface, use iface name (eg. eth0) or null for ansible_default_ipv4
+consul_auto_bind_enabled: true
+consul_auto_client_enabled: false
+consul_auto_bind_iface: ~
+consul_auto_client_iface: ~
+
+# if set, will render cert/consul.crt, cert/consul.key, cert/ca.crt in consul_conf_dir
+consul_cert_content: ~
+consul_key_content: ~
+consul_ca_content: ~
+
+# consul init method; can be upstart, systemd, sysvinit, or null to auto-detect
+consul_init_method: ~
+
+consul_config: {}         # config settings passed to consul.json conf file
+consul_services: {}       # dict of individual consul service files to render
+consul_services_bulk: []  # array of services to render in one file (services.json)
+consul_checks: {}         # dict of individual checks files to render
+consul_checks_bulk: []    # array of checks to render in one file (checks.json)
+
+# consul dnsmasq settings
+consul_install_dnsmasq: false
+consul_dnsmasq_networkmanager_enabled: false  # use true when RHEL and NetworkManager
+consul_dnsmasq_upstream_servers: []
+
+# consulate settings
+consul_install_consulate: false
+consul_consulate_url: ~ # url to remote package; defaults to consulate on PyPI
+consul_consulate_version: ~ # optional package version
+
+# templates used in this role
+consul_upstart_template: consul.conf.j2
+consul_systemd_template: consul.service.j2
+consul_sysvinit_template: consul.sysvinit.j2
+consul_dnsmasq_upstream_template: dnsmasq_resolv.conf.j2
+
+# checksums of official consul releases
+consul_checksums:
+  consul_0.5.0_linux_amd64.zip: sha256:161f2a8803e31550bd92a00e95a3a517aa949714c19d3124c46e56cfdc97b088
+  consul_0.5.1_linux_amd64.zip: sha256:967ad75865b950698833eaf26415ba48d8a22befb5d4e8c77630ad70f251b100
+  consul_0.5.2_linux_amd64.zip: sha256:171cf4074bfca3b1e46112105738985783f19c47f4408377241b868affa9d445
+  consul_0.6.0_linux_amd64.zip: sha256:307fa26ae32cb8732aed2b3320ed8daf02c28b50d952cbaae8faf67c79f78847
+  consul_0.6.1_linux_amd64.zip: sha256:dbb3c348fdb7cdfc03e5617956b243c594a399733afee323e69ef664cdadb1ac
+  consul_0.6.2_linux_amd64.zip: sha256:7234eba9a6d1ce169ff8d7af91733e63d8fc82193d52d1b10979d8be5c959095
+  consul_0.6.3_linux_amd64.zip: sha256:b0532c61fec4a4f6d130c893fd8954ec007a6ad93effbe283a39224ed237e250
+  consul_0.6.4_linux_amd64.zip: sha256:abdf0e1856292468e2c9971420d73b805e93888e006c76324ae39416edcf0627

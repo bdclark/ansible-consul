@@ -1,0 +1,16 @@
+---
+- name: update apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+
+- name: install pip
+  package:
+    name: python-pip
+    state: present
+
+- name: install consulate
+  pip:
+    name: "{{ consul_consulate_url | default('consulate') }}"
+    version: "{{ consul_consulate_version }}"

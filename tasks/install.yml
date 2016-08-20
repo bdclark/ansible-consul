@@ -1,0 +1,39 @@
+---
+- name: update apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+
+- name: install unzip
+  package:
+    name: unzip
+    state: present
+
+- name: download consul zip
+  get_url:
+    url: "{{ consul_zip_url }}"
+    dest: "{{ consul_zip_dir }}/{{ consul_zip }}"
+    checksum: "{{ consul_zip_checksum }}"
+  register: consul_was_downloaded
+
+- name: create consul binary directory
+  file:
+    state: directory
+    path: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
+    owner: root
+    group: root
+    recurse: yes
+
+- name: extract consul zip
+  unarchive:
+    src: "{{ consul_zip_dir }}/{{ consul_zip }}"
+    dest: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
+    copy: no
+    creates: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+
+- name: symlink consul binary
+  file:
+    state: link
+    src: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+    dest: "{{ consul_bin_dir }}/consul"

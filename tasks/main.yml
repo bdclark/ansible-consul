@@ -1,0 +1,26 @@
+---
+- include: install.yml
+
+- include: configure.yml
+
+- include: consulate.yml
+  when: consul_install_consulate
+
+- include: dnsmasq.yml
+  when: consul_install_dnsmasq and not consul_dnsmasq_networkmanager_enabled
+
+- include: dnsmasq_netman.yml
+  when: consul_install_dnsmasq and consul_dnsmasq_networkmanager_enabled
+
+- name: start consul
+  service:
+    name: consul
+    state: "{{ consul_service_state }}"
+    enabled: "{{ consul_service_enabled }}"
+  when: consul_service_managed
+
+- include: services.yml
+  when: consul_services|length > 0 or consul_services_bulk|length > 0
+
+- include: checks.yml
+  when: consul_checks|length > 0 or consul_checks_bulk |length > 0

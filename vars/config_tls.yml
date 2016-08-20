@@ -1,0 +1,5 @@
+---
+consul_base_config:
+  cert_file: "{{ consul_conf_dir }}/cert/consul.crt"
+  key_file: "{{ consul_conf_dir }}/cert/consul.key"
+  ca_file: "{{ consul_conf_dir }}/cert/ca.crt"

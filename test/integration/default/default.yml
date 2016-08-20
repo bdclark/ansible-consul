@@ -1,0 +1,43 @@
+---
+- hosts: test-kitchen
+  remote_user: root
+
+  vars:
+    consul_install_dnsmasq: true
+    consul_install_consulate: true
+    consul_consulate_url: https://github.com/gmr/consulate/archive/81e5b74.zip
+    consul_config:
+      bootstrap_expect: 1
+      datacenter: dev
+      server: true
+      acl_token: secret_agent
+      ui: true
+    consul_services:
+      foo:
+        address: 1.1.1.1
+        port: 1111
+      bar:
+        address: 2.2.2.2
+        port: 2222
+    consul_services_bulk:
+      - name: bulk-foo
+        address: 3.3.3.3
+        port: 3333
+      - name: bulk-bar
+        address: 4.4.4.4
+        port: 4444
+    consul_checks:
+      ssh:
+        tcp: localhost:22
+        interval: 10s
+        timeout: 1s
+  roles:
+    - role: consul
+
+  tasks:
+    - package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - curl
+        - "{{ 'bind9-host' if ansible_os_family == 'Debian' else 'bind-utils' }}"

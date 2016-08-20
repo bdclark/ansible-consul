@@ -1,0 +1,16 @@
+[Unit]
+Description=Consul
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Environment=GOMAXPROCS={{ ansible_processor_vcpus }}
+User={{ consul_user }}
+Group={{ consul_group }}
+ExecStart={{ consul_bin_dir }}/consul agent -config-file={{ consul_conf_dir }}/consul.json -config-dir={{ consul_conf_dir }}/conf.d
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal={{ consul_service_stop_signal }}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

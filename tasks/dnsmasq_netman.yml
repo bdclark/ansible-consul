@@ -1,0 +1,38 @@
+---
+- name: install dnsmasq
+  package:
+    name: dnsmasq
+    state: present
+
+- name: ensure dnsmasq.d directory
+  file:
+    state: directory
+    dest: /etc/NetworkManager/dnsmasq.d
+
+- name: set consul dns server address
+  set_fact:
+    consul_dns_ip: "{{ consul_config.addresses.dns }}"
+  when: consul_config.addresses.dns is defined
+
+- name: configure dnsmasq for consul domain
+  copy:
+    content: 'server=/{{ consul_domain }}/{{ consul_dns_ip | default(consul_config.client_addr) }}#{{ consul_port_dns }}'
+    dest: /etc/NetworkManager/dnsmasq.d/10-consul
+  notify: restart dnsmasq
+
+- name: enable NetworkManager dnsmasq plugin
+  lineinfile:
+    dest: /etc/NetworkManager/NetworkManager.conf
+    insertafter: \[main\]
+    regexp: ^dns=
+    line: dns=dnsmasq
+    state: present
+  when: ansible_os_family == 'RedHat' and consul_dnsmasq_networkmanager_enabled
+  notify: restart networkmanager
+
+- name: stop/disable dnsmasq (NetworkManager)
+  service:
+    name: dnsmasq
+    state: stopped
+    enabled: no
+  when: ansible_os_family == 'RedHat' and consul_dnsmasq_networkmanager_enabled

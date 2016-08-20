@@ -1,0 +1,5 @@
+---
+consul_base_config:
+  bind_addr: "{{ auto_bind_ip | default(omit) }}"
+  client_addr: "{{ auto_client_ip | default('127.0.0.1') }}"
+  data_dir: "{{ consul_data_dir }}"
