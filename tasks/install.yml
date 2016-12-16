@@ -67,9 +67,11 @@
     dest: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
     copy: no
     creates: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+  notify: restart consul
 
 - name: symlink consul binary
   file:
     state: link
     src: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
     dest: "{{ consul_bin_dir }}/consul"
+  notify: restart consul
