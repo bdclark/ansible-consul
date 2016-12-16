@@ -10,12 +10,48 @@
     name: unzip
     state: present
 
+- name: download consul checksum file
+  get_url:
+    url: "{{ consul_checksum_url }}"
+    dest: "{{ consul_zip_dir }}/{{ consul_checksum_file }}"
+
+- name: write hashicorp gpg key file
+  copy:
+    src: hashicorp.asc
+    dest: /etc/hashicorp.asc
+    owner: root
+    group: root
+    mode: 0644
+  when: "{{ consul_verify_checksum_signature }} | bool"
+
+- name: import hashicorp gpg key
+  command: gpg --import /etc/hashicorp.asc
+  register: consul_gpg_key_imported
+  changed_when: no
+  when: "{{ consul_verify_checksum_signature }} | bool"
+
+- name: download consul checksum signature file
+  get_url:
+    url: "{{ consul_signature_url }}"
+    dest: "{{ consul_zip_dir }}/{{ consul_signature_file }}"
+  when: "{{ consul_verify_checksum_signature }} | bool"
+
+- name: verify checksum file
+  command: gpg --batch --verify {{ consul_zip_dir }}/{{ consul_signature_file }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
+  register: verify_signed_checksum
+  changed_when: no
+  when: "{{ consul_verify_checksum_signature }} | bool"
+
+- name: get checksum of consul zip
+  command:  grep {{ consul_zip }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
+  register: consul_checksum
+  changed_when: no
+
 - name: download consul zip
   get_url:
     url: "{{ consul_zip_url }}"
     dest: "{{ consul_zip_dir }}/{{ consul_zip }}"
-    checksum: "{{ consul_zip_checksum }}"
-  register: consul_was_downloaded
+    checksum: "sha256:{{ consul_checksum.stdout.split(' ') | first }}"
 
 - name: create consul binary directory
   file:
