@@ -13,7 +13,7 @@
 - name: ensure consul download directory
   file:
     state: directory
-    path: "{{ consul_download_dir }}"
+    path: "{{ consul_zip_dir }}"
     recurse: yes
 
 - name: download consul checksum file

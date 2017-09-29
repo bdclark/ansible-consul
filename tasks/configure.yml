@@ -39,13 +39,14 @@
 - name: create conf directories
   file:
     state: directory
-    path: "{{ consul_conf_dir }}/{{ item }}"
-    owner: "{{ consul_user }}"
+    path: "{{ item }}"
+    owner: "{{ consul_conf_dir_owner }}"
     group: "{{ consul_group }}"
-    mode: 0755
+    mode: "{{ consul_conf_dir_mode }}"
   with_items:
-    - conf.d
-    - cert
+    - "{{ consul_conf_dir }}"
+    - "{{ consul_conf_dir }}/conf.d"
+    - "{{ consul_conf_dir }}/cert"
 
 - name: create data directory
   file:
@@ -53,15 +54,16 @@
     path: "{{ consul_data_dir }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0755
+    mode: 0750
     recurse: yes
 
 - name: write config file
   copy:
     content: "{{ consul_config | to_nice_json }}"
     dest: "{{ consul_conf_dir }}/consul.json"
-    owner: "{{ consul_user}}"
+    owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
+    mode: 0640
   notify:
     - restart consul
 

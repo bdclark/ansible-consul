@@ -26,12 +26,12 @@
 - name: set consul dns server address
   set_fact:
     consul_dns_ip: "{{ consul_config.addresses.dns }}"
-  when: consul_config.addresses.dns is defined
+  when: consul_config.addresses is defined and consul_config.addresses.dns
 
 - name: set consul dns server port
   set_fact:
     consul_dns_port: "{{ consuL_config.ports.dns }}"
-  when: consul_conf.ports.dns is defined
+  when: consul_config.ports is defined and consul_config.ports.dns
 
 - name: configure dnsmasq for consul domain
   copy:
