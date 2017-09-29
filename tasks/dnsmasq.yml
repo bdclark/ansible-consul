@@ -30,7 +30,7 @@
 
 - name: set consul dns server port
   set_fact:
-    consul_dns_port: "{{ consuL_config.ports.dns }}"
+    consul_dns_port: "{{ consul_config.ports.dns }}"
   when: consul_config.ports is defined and consul_config.ports.dns
 
 - name: configure dnsmasq for consul domain
