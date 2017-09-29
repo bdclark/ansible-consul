@@ -2,21 +2,9 @@
 driver:
   name: vagrant
 
-# provisioner:
-#   name: ansible_playbook
-#   require_chef_for_busser: false
-#   require_ruby_for_busser: false
-#   hosts: test-kitchen
-#   ansible_verbose: true
-#   ansible_verbosity: 1
-#   ansible_diff: true
-#   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
-
 provisioner:
   name: ansible_push
-  playbook: test/playbooks/default.yml
   ansible_config: test/ansible.cfg
-  # become: true
   verbose: v
   diff: true
   chef_bootstrap_url: nil
@@ -25,17 +13,22 @@ verifier:
   name: inspec
 
 platforms:
-- name: ubuntu-14.04
-- name: ubuntu-16.04
-- name: centos-6.7
-  provisioner:
-    extra_vars:
-      consul_dnsmasq_upstream_servers:
-        - 8.8.8.8
-- name: centos-7.2
-  provisioner:
-    extra_vars:
+  - name: ubuntu-14.04
+  - name: ubuntu-16.04
+  - name: centos-6.7
+    provisioner:
+      extra_vars:
+        consul_dnsmasq_upstream_servers:
+          - 8.8.8.8
+  - name: centos-7.2
+    provisioner:
+      extra_vars:
       consul_dnsmasq_networkmanager_enabled: true
 
 suites:
-- name: default
+  - name: default
+    provisioner:
+      playbook: test/playbooks/default.yml
+  - name: tls
+    provisioner:
+      playbook: test/playbooks/tls.yml
