@@ -1,5 +1,5 @@
 ---
-consul_version: 0.7.1
+consul_version: 0.9.3
 
 consul_zip: "consul_{{ consul_version }}_linux_amd64.zip"
 consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_zip }}"
@@ -15,9 +15,11 @@ consul_zip_checksum: "{{ consul_checksums[consul_zip] }}"
 consul_zip_dir: /tmp  # path to download consul zip file before extraction
 
 consul_bin_dir: /usr/local/bin          # dir to extract consul binary
-consul_conf_dir: /etc/consul            # base dir for consul config files
 consul_data_dir: /var/lib/consul        # consul data dir
 consul_log_dir: /var/log/consul         # log dir only used with sysvinit
+consul_conf_dir: /etc/consul            # base dir for consul config files
+consul_conf_dir_owner: root             # owner of consul config dir
+consul_conf_dir_mode: 0750              # mode of consul config dir
 
 consul_user_managed: true               # if true will create consul user/group
 consul_user: consul
