@@ -89,7 +89,3 @@ describe port(53) do
   its('protocols') { should include 'tcp' }
   its('protocols') { should include 'udp' }
 end
-
-describe command('consulate kv ls') do
-  its('exit_status') { should eq 0 }
-end

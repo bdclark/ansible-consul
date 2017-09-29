@@ -3,9 +3,6 @@
 
 - include: configure.yml
 
-- include: consulate.yml
-  when: consul_install_consulate
-
 - include: dnsmasq.yml
   when: consul_install_dnsmasq and not consul_dnsmasq_networkmanager_enabled
 

@@ -57,11 +57,6 @@ consul_install_dnsmasq: false
 consul_dnsmasq_networkmanager_enabled: false  # use true when RHEL and NetworkManager
 consul_dnsmasq_upstream_servers: []
 
-# consulate settings
-consul_install_consulate: false
-consul_consulate_url: ~ # url to remote package; defaults to consulate on PyPI
-consul_consulate_version: ~ # optional package version
-
 # templates used in this role
 consul_upstart_template: consul.conf.j2
 consul_systemd_template: consul.service.j2

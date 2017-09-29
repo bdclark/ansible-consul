@@ -58,6 +58,7 @@
     recurse: yes
 
 - name: write config file
+  no_log: true
   copy:
     content: "{{ consul_config | to_nice_json }}"
     dest: "{{ consul_conf_dir }}/consul.json"
