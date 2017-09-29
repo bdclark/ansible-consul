@@ -24,7 +24,7 @@
 
 - name: set consul configuration
   set_fact:
-    consul_config: "{{ consul_base_config | combine(consul_config) }}"
+    consul_config: "{{ consul_base_config | combine(consul_config, recursive=True) }}"
 
 - name: create service group
   group:
