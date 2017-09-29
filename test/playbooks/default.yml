@@ -4,8 +4,6 @@
 
   vars:
     consul_install_dnsmasq: true
-    consul_install_consulate: true
-    consul_consulate_url: https://github.com/gmr/consulate/archive/81e5b74.zip
     consul_config:
       bootstrap_expect: 1
       datacenter: dev

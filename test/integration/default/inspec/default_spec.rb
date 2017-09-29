@@ -25,6 +25,9 @@ describe file('/etc/consul/consul.json') do
   its('content') { should include('"bootstrap_expect": 1') }
   its('content') { should include('"ui": true') }
   its('content') { should include('"acl_token": "secret_agent"') }
+  its('content') { should_not include('ca_file') }
+  its('content') { should_not include('cert_file') }
+  its('content') { should_not include('key_file') }
 end
 
 describe service('consul') do

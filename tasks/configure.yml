@@ -12,9 +12,15 @@
 - name: include base config settings
   include_vars: config.yml
 
-- name: include TLS config settings
-  include_vars: config_tls.yml
-  when: consul_key_content is not none and consul_cert_content is not none and consul_ca_content is not none
+- name: update base config - TLS CA cert_file
+  set_fact:
+    consul_base_config: "{{ consul_base_config | combine({'ca_file': consul_conf_dir + '/tls/ca.crt' }) }}"
+  when: consul_ca_content
+
+- name: update base config - TLS cert/key
+  set_fact:
+    consul_base_config: "{{ consul_base_config | combine({'cert_file': consul_conf_dir + '/tls/consul.crt', 'key_file': consul_conf_dir + '/tls/consul.key' }) }}"
+  when: consul_cert_content and consul_key_content
 
 - name: set consul configuration
   set_fact:
@@ -46,7 +52,7 @@
   with_items:
     - "{{ consul_conf_dir }}"
     - "{{ consul_conf_dir }}/conf.d"
-    - "{{ consul_conf_dir }}/cert"
+    - "{{ consul_conf_dir }}/tls"
 
 - name: create data directory
   file:
