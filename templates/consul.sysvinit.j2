@@ -5,7 +5,7 @@
 # chkconfig:   2345 95 95
 # description: Consul is a tool for service discovery and configuration
 # processname: consul
-# config: {{ consul_conf_dir }}/consul.json
+# config: {{ consul_conf_dir }}/config.json
 # pidfile: /var/run/consul.pid
 
 ### BEGIN INIT INFO
@@ -29,13 +29,11 @@ exec="{{ consul_bin_dir }}/$prog"
 pidfile="/var/run/$prog.pid"
 lockfile="/var/lock/subsys/$prog"
 logfile="{{ consul_log_dir }}/${prog}.log"
-conffile="{{ consul_conf_dir }}/consul.json"
+conffile="{{ consul_conf_dir }}/config.json"
 confdir="{{ consul_conf_dir }}/conf.d"
 
 # pull in sysconfig settings
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
-
-export GOMAXPROCS={{ ansible_processor_vcpus }}
 
 start() {
     [ -x $exec ] || exit 5

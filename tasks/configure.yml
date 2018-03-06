@@ -1,26 +1,13 @@
 ---
-- name: set auto client IP
-  set_fact:
-    auto_client_ip: "{{ ansible_default_ipv4.address if consul_auto_client_iface is none else hostvars[inventory_hostname]['ansible_'+consul_auto_client_iface]['ipv4']['address'] }}"
-  when: consul_auto_client_enabled
-
-- name: set auto bind IP
-  set_fact:
-    auto_bind_ip: "{{ ansible_default_ipv4.address if consul_auto_bind_iface is none else hostvars[inventory_hostname]['ansible_'+consul_auto_bind_iface]['ipv4']['address'] }}"
-  when: consul_auto_bind_enabled
-
-- name: include base config settings
-  include_vars: config.yml
-
 - name: update base config - TLS CA cert_file
   set_fact:
     consul_base_config: "{{ consul_base_config | combine({'ca_file': consul_conf_dir + '/tls/ca.crt' }) }}"
-  when: consul_ca_content
+  when: consul_ca_content is not none and consul_ca_content != ""
 
 - name: update base config - TLS cert/key
   set_fact:
     consul_base_config: "{{ consul_base_config | combine({'cert_file': consul_conf_dir + '/tls/consul.crt', 'key_file': consul_conf_dir + '/tls/consul.key' }) }}"
-  when: consul_cert_content and consul_key_content
+  when: consul_cert_content is not none and consul_cert_content != "" and consul_key_content is not none and consul_key_content != ""
 
 - name: set consul configuration
   set_fact:
@@ -60,17 +47,16 @@
     path: "{{ consul_data_dir }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0750
-    recurse: yes
+    mode: "0750"
 
 - name: write config file
   no_log: true
   copy:
     content: "{{ consul_config | to_nice_json }}"
-    dest: "{{ consul_conf_dir }}/consul.json"
+    dest: "{{ consul_conf_dir }}/config.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0640
+    mode: "0640"
   notify:
     - restart consul
 
@@ -81,7 +67,7 @@
     dest: "{{ consul_config.key_file }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0600
+    mode: "0600"
   when: consul_key_content is not none
 
 - name: create TLS cert
@@ -91,7 +77,7 @@
     dest: "{{ consul_config.cert_file }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0600
+    mode: "0600"
   when: consul_cert_content is not none
 
 - name: create TLS CA cert
@@ -101,7 +87,7 @@
     dest: "{{ consul_config.ca_file }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0600
+    mode: "0600"
   when: consul_ca_content is not none
 
 - name: upstart init script
@@ -110,7 +96,7 @@
     dest: /etc/init/consul.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: consul_init_method == 'upstart' or (consul_init_method is none and ansible_os_family == 'Debian' and ansible_service_mgr == 'upstart')
   register: consul_init_upstart
   notify:
@@ -122,7 +108,7 @@
     dest: /etc/systemd/system/consul.service
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   when: consul_init_method == 'systemd' or (consul_init_method is none and ansible_service_mgr == 'systemd')
   register: consul_init_systemd
   notify:
@@ -135,7 +121,7 @@
     dest: /etc/init.d/consul
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   when: consul_init_method == 'sysvinit' or (consul_init_upstart|skipped and consul_init_systemd|skipped)
   register: consul_init_sysvinit
   notify:
@@ -147,6 +133,6 @@
     path: "{{ consul_log_dir }}"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-    mode: 0755
+    mode: "0755"
     recurse: yes
   when: not consul_init_sysvinit|skipped

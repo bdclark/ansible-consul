@@ -11,12 +11,17 @@
 
 - name: set consul dns server address
   set_fact:
-    consul_dns_ip: "{{ consul_config.addresses.dns }}"
-  when: consul_config.addresses.dns is defined
+    consul_dns_ip: "{{ consul_config.addresses.dns | split(':')[0] }}"
+  when: consul_config.addresses is defined and consul_config.addresses.dns
+
+- name: set consul dns server port
+  set_fact:
+    consul_dns_port: "{{ consul_config.ports.dns }}"
+  when: consul_config.ports is defined and consul_config.ports.dns
 
 - name: configure dnsmasq for consul domain
   copy:
-    content: 'server=/{{ consul_domain }}/{{ consul_dns_ip | default(consul_config.client_addr) }}#{{ consul_port_dns }}'
+    content: "server=/{{ consul_config.domain | default('consul') }}/{{ consul_dns_ip | default(consul_config.client_addr) }}#{{ consul_dns_port | default(8600) }}"
     dest: /etc/NetworkManager/dnsmasq.d/10-consul
   notify: restart dnsmasq
 

@@ -1,44 +1,52 @@
 ---
-consul_version: 0.9.3
+# version to install
+consul_version: 1.0.6
 
+# zip name/url
 consul_zip: "consul_{{ consul_version }}_linux_amd64.zip"
 consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_zip }}"
 
+# checksum file/url
 consul_checksum_file: "consul_{{ consul_version }}_SHA256SUMS"
 consul_checksum_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_checksum_file }}"
 
+# if enabled, will download consul_signature_url and verify consul_checksum_file
 consul_verify_checksum_signature: true
 consul_signature_file: "{{ consul_checksum_file }}.sig"
 consul_signature_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_signature_file }}"
 
-consul_zip_checksum: "{{ consul_checksums[consul_zip] }}"
-consul_zip_dir: /tmp  # path to download consul zip file before extraction
+# path to download consul zip file before extraction
+consul_zip_dir: /tmp
+# dir to extract consul binary
+consul_bin_dir: /usr/local/bin
+# consul data dir
+consul_data_dir: /var/lib/consul
+# log dir (only used with sysvinit)
+consul_log_dir: /var/log/consul
+# base dir for consul config files
+consul_conf_dir: /etc/consul
+# owner of consul config dir
+consul_conf_dir_owner: root
+# mode of consul config dir
+consul_conf_dir_mode: "0750"
 
-consul_bin_dir: /usr/local/bin          # dir to extract consul binary
-consul_data_dir: /var/lib/consul        # consul data dir
-consul_log_dir: /var/log/consul         # log dir only used with sysvinit
-consul_conf_dir: /etc/consul            # base dir for consul config files
-consul_conf_dir_owner: root             # owner of consul config dir
-consul_conf_dir_mode: 0750              # mode of consul config dir
-
-consul_user_managed: true               # if true will create consul user/group
+# if true will create/manage consul_user and consul_group
+consul_user_managed: true
 consul_user: consul
 consul_group: consul
 
-consul_service_managed: true            # create/start/reload/restart service
-consul_service_enabled: true            # whether service is enabled/disabled
-consul_service_state: started           # desired state of consul service
-consul_service_restart_on_update: true  # restart on config file/service changes
-consul_service_stop_signal: INT         # signal to send when service stops
+# create/start/reload/restart service
+consul_service_managed: true
+# whether service is enabled/disabled
+consul_service_enabled: true
+# desired state of consul service
+consul_service_state: started
+# restart on config file/service changes
+consul_service_restart_on_update: true
+# signal to send when service stops
+consul_service_stop_signal: INT
 
-# auto-detection of consul bind/client addresses based on interface
-# for consul_auto_*_iface, use iface name (eg. eth0) or null for ansible_default_ipv4
-consul_auto_bind_enabled: true
-consul_auto_client_enabled: false
-consul_auto_bind_iface: ~
-consul_auto_client_iface: ~
-
-# if set, will render cert/consul.crt, cert/consul.key, cert/ca.crt in consul_conf_dir
+# if set, will render tls/consul.crt, tls/consul.key, tls/ca.crt in consul_conf_dir
 consul_cert_content: ~
 consul_key_content: ~
 consul_ca_content: ~
@@ -46,15 +54,21 @@ consul_ca_content: ~
 # consul init method; can be upstart, systemd, sysvinit, or null to auto-detect
 consul_init_method: ~
 
-consul_config: {}         # config settings passed to consul.json conf file
-consul_services: {}       # dict of individual consul service files to render
-consul_services_bulk: []  # array of services to render in one file (services.json)
-consul_checks: {}         # dict of individual checks files to render
-consul_checks_bulk: []    # array of checks to render in one file (checks.json)
+# config settings passed to config.json conf file
+consul_config: {}
+# dict of individual consul service files to render
+consul_services: {}
+# array of services to render in one file (services.json)
+consul_services_bulk: []
+# dict of individual checks files to render
+consul_checks: {}
+# array of checks to render in one file (checks.json)
+consul_checks_bulk: []
 
 # consul dnsmasq settings
 consul_install_dnsmasq: false
-consul_dnsmasq_networkmanager_enabled: false  # use true when RHEL and NetworkManager
+# use true when RHEL and NetworkManager
+consul_dnsmasq_networkmanager_enabled: false
 consul_dnsmasq_upstream_servers: []
 
 # templates used in this role

@@ -25,7 +25,7 @@
 
 - name: set consul dns server address
   set_fact:
-    consul_dns_ip: "{{ consul_config.addresses.dns }}"
+    consul_dns_ip: "{{ consul_config.addresses.dns | split(':')[0] }}"
   when: consul_config.addresses is defined and consul_config.addresses.dns
 
 - name: set consul dns server port

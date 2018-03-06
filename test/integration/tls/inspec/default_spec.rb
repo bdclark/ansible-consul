@@ -15,7 +15,7 @@ describe file('/var/lib/consul') do
   its('mode') { should cmp '0750' }
 end
 
-describe file('/etc/consul/consul.json') do
+describe file('/etc/consul/config.json') do
   it { should be_file }
   it { should be_owned_by('consul') }
   it { should be_grouped_into 'consul' }
@@ -45,7 +45,7 @@ CONSUL_CLIENT_CERT=/etc/consul/tls/consul.crt \
 CONSUL_CLIENT_KEY=/etc/consul/tls/consul.key \
 CONSUL_HTTP_ADDR=127.0.0.1:8501 \
 CONSUL_TLS_SERVER_NAME=server.dc1.consul \
-consul info
+/usr/local/bin/consul info
 EOS
 
 describe command(tls_info_command) do

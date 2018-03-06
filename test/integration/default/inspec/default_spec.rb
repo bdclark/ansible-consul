@@ -15,7 +15,7 @@ describe file('/var/lib/consul') do
   its('mode') { should cmp '0750' }
 end
 
-describe file('/etc/consul/consul.json') do
+describe file('/etc/consul/config.json') do
   it { should be_file }
   it { should be_owned_by('consul') }
   it { should be_grouped_into 'consul' }
@@ -89,6 +89,4 @@ end
 
 describe port(53) do
   it { should be_listening }
-  its('protocols') { should include 'tcp' }
-  its('protocols') { should include 'udp' }
 end
