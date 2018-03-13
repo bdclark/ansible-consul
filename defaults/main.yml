@@ -35,8 +35,6 @@ consul_user_managed: true
 consul_user: consul
 consul_group: consul
 
-# create/start/reload/restart service
-consul_service_managed: true
 # whether service is enabled/disabled
 consul_service_enabled: true
 # desired state of consul service
