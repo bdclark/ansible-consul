@@ -136,3 +136,18 @@
     mode: "0755"
     recurse: yes
   when: not consul_init_sysvinit|skipped
+
+- name: create dynamic configuration script
+  template:
+    src: configure-consul.sh.j2
+    dest: "{{ consul_bin_dir }}/configure-consul"
+    owner: root
+    group: root
+    mode: "0755"
+  when: consul_include_configuration_script
+
+- name: install jq
+  package:
+    name: jq
+    state: present
+  when: consul_include_configuration_script

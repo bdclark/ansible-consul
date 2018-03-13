@@ -53,6 +53,19 @@ end
   end
 end
 
+describe file('/usr/local/bin/configure-consul') do
+  it { should be_file }
+  it { should be_owned_by('root') }
+  its('mode') { should cmp '0755' }
+end
+
+describe command('configure-consul --dry-run --client 0.0.0.0 --server --retry-join "provider=aws"') do
+  its('stdout') { should match(%r{"data_dir": "/var/lib/consul"}) }
+  its('stdout') { should match(%r{"client_addr": "0.0.0.0"}) }
+  its('stdout') { should match(%r{"server": true}) }
+  its('stdout') { should match(%r{"retry_join": \[\n\s*"provider=aws"\n\s*\]}) }
+end
+
 describe command('curl -s http://localhost:8500/v1/agent/checks') do
   its('stdout') { should match(/"ssh":{.*"Name":"ssh".*}$/) }
 end

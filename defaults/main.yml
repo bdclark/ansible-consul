@@ -63,6 +63,9 @@ consul_checks: {}
 # array of checks to render in one file (checks.json)
 consul_checks_bulk: []
 
+# whether to install optional dynamic configuration script (will install jq)
+consul_include_configuration_script: no
+
 # consul dnsmasq settings
 consul_install_dnsmasq: false
 # use true when RHEL and NetworkManager
