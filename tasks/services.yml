@@ -7,15 +7,20 @@
     mode: 0640
     content: "{{ { 'service': { 'name': item.value.name|default(item.key) } | combine(item.value) } | to_nice_json }}"
   with_dict: "{{ consul_services }}"
-  when: consul_services | length > 0
   notify: reload consul
 
 - name: configure consul bulk services
   copy:
-    dest: "{{ consul_conf_dir}}/conf.d/services.json"
+    dest: "{{ consul_conf_dir }}/conf.d/services.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
     content: "{{ { 'services': consul_services_bulk } | to_nice_json }}"
   when: consul_services_bulk | length > 0
   notify: reload consul
+
+- name: remove bulk services config file
+  file:
+    path: "{{ consul_conf_dir }}/conf.d/services.json"
+    state: absent
+  when: consul_services_bulk | length == 0

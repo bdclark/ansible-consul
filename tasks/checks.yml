@@ -18,3 +18,9 @@
     content: "{{ { 'checks': consul_checks_bulk } | to_nice_json }}"
   when: consul_checks_bulk | length > 0
   notify: reload consul
+
+- name: remove bulk checks config file
+  file:
+    path: "{{ consul_conf_dir }}/conf.d/checks.json"
+    state: absent
+  when: consul_checks_bulk | length == 0
