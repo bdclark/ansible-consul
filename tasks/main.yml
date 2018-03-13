@@ -9,7 +9,7 @@
 - include: dnsmasq_netman.yml
   when: consul_install_dnsmasq and consul_dnsmasq_networkmanager_enabled
 
-- name: start consul
+- name: manage consul service
   service:
     name: consul
     state: "{{ consul_service_state }}"

@@ -43,14 +43,14 @@
   template:
     src: "{{ consul_dnsmasq_upstream_template }}"
     dest: /etc/dnsmasq_resolv.conf
-  when: "{{ consul_dnsmasq_upstream_servers | length > 0 }}"
+  when: consul_dnsmasq_upstream_servers | length > 0
   notify: restart dnsmasq
 
 - name: configure dnsmasq for upstream resolvers
   copy:
     content: "resolv-file=/etc/dnsmasq_resolv.conf"
     dest: /etc/dnsmasq.d/20-upstream-servers
-  when: "{{ consul_dnsmasq_upstream_servers | length > 0 }}"
+  when: consul_dnsmasq_upstream_servers | length > 0
   notify: restart dnsmasq
 
 - name: start dnsmasq
