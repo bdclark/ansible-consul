@@ -12,7 +12,7 @@ acl_token=
 acl_master_token=
 acl_agent_token=
 acl_agent_master_token=
-server="false"
+server=
 config_path="{{ consul_conf_dir }}/config.json"
 default_data_dir="{{ consul_data_dir }}"
 data_dir=
@@ -62,6 +62,7 @@ Options:
                            multiple times. If using cloud auto-join, a quoted
                            string must be provided.
   --server                 Run agent as server.
+  --no-server              Run agent as client.
   --ui                     Enables the built-in web UI server.
   --bootstrap-expect NUM   The number of expected servers in the datacenter.
   --overwrite              Overwrite file rather than merging with existing
@@ -141,10 +142,10 @@ function get_consul_config_value {
 function generate_consul_config {
   local previous_config="{}"
 
-  if [[ "$overwrite" == "false" && -e "$config_path" ]]; then
+  if [ "$overwrite" == "false" ] && [ -e "$config_path" ]; then
     log_info "Reading existing configuration from ${config_path}."
     previous_config="$(jq -r "." "$config_path")"
-    if [[ -n "$previous_config" ]]; then
+    if [ -n "$previous_config" ]; then
       consul_config="$previous_config"
     fi
   else
@@ -152,17 +153,24 @@ function generate_consul_config {
     overwrite="true"
   fi
 
-  if [[ "$server" == "true" ]]; then
+  if [ "$server" == "true" ]; then
     add_to_consul_config "server" "true"
-    if [[ -n "$bootstrap_expect" ]]; then
+    if [ -n "$bootstrap_expect" ]; then
       add_to_consul_config "bootstrap_expect" "$bootstrap_expect"
     else
-      if [[ -z "$(get_consul_config_value "bootstrap_expect")" ]]; then
+      if [ -z "$(get_consul_config_value "bootstrap_expect")" ]; then
         log_warn "Server mode selected but --bootstrap-expect not provided and bootstrap_expect not found in existing config."
       fi
     fi
-  else
-    consul_config="$(echo "$consul_config" | jq "del(.server, .bootstrap_expect)")"
+  elif [ "$server" == "false" ]; then
+    add_to_consul_config "server" "false"
+    if [ -n "$bootstrap_expect"]; then
+      log_warn "Server mode disabled, ignoring provided --bootstrap-expect flag."
+    fi
+    if [ -n "$(get_consul_config_value "bootstrap_expect")" ]; then
+      log_warn "Server mode disabled but bootstrap_expect found in existing config... removing."
+      consul_config="$(echo "$consul_config" | jq "del(.bootstrap_expect)")"
+    fi
   fi
 
 {# HACK: Prevent jinja2 from interpreting the {# below as start of comment block #}
@@ -187,7 +195,7 @@ function generate_consul_config {
     add_to_consul_config "data_dir" "$default_data_dir"
   fi
 
-  if [[ "$dry_run" == "true" ]]; then
+  if [ "$dry_run" == "true" ]; then
     echo $consul_config | jq "."
   else
     log_info "Creating Consul config file $config_path"
@@ -261,6 +269,9 @@ function run {
         assert_not_empty "$key" "$2"
         node_name="$2"
         shift
+        ;;
+      --no-server)
+        server="false"
         ;;
       --retry-join)
         assert_not_empty "$key" "$2"
