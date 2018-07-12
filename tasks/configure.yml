@@ -108,7 +108,7 @@
     dest: /etc/systemd/system/consul.service
     owner: root
     group: root
-    mode: "0755"
+    mode: "0644"
   when: consul_init_method == 'systemd' or (consul_init_method is none and ansible_service_mgr == 'systemd')
   register: consul_init_systemd
   notify:
