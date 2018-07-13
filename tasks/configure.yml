@@ -1,12 +1,12 @@
 ---
 - name: update base config - TLS CA cert_file
   set_fact:
-    consul_base_config: "{{ consul_base_config | combine({'ca_file': consul_conf_dir + '/tls/ca.crt' }) }}"
+    consul_base_config: "{{ consul_base_config | combine({'ca_file': consul_conf_dir + '/ca.crt' }) }}"
   when: consul_ca_content is not none and consul_ca_content != ""
 
 - name: update base config - TLS cert/key
   set_fact:
-    consul_base_config: "{{ consul_base_config | combine({'cert_file': consul_conf_dir + '/tls/consul.crt', 'key_file': consul_conf_dir + '/tls/consul.key' }) }}"
+    consul_base_config: "{{ consul_base_config | combine({'cert_file': consul_conf_dir + '/consul.crt', 'key_file': consul_conf_dir + '/consul.key' }) }}"
   when: consul_cert_content is not none and consul_cert_content != "" and consul_key_content is not none and consul_key_content != ""
 
 - name: set consul configuration
@@ -29,17 +29,13 @@
     comment: Consul service user
   when: consul_user_managed
 
-- name: create conf directories
+- name: create conf directory
   file:
     state: directory
-    path: "{{ item }}"
+    path: "{{ consul_conf_dir }}"
     owner: "{{ consul_conf_dir_owner }}"
     group: "{{ consul_group }}"
     mode: "{{ consul_conf_dir_mode }}"
-  with_items:
-    - "{{ consul_conf_dir }}"
-    - "{{ consul_conf_dir }}/conf.d"
-    - "{{ consul_conf_dir }}/tls"
 
 - name: create data directory
   file:
@@ -136,18 +132,3 @@
     mode: "0755"
     recurse: yes
   when: not consul_init_sysvinit|skipped
-
-- name: create dynamic configuration script
-  template:
-    src: configure-consul.sh.j2
-    dest: "{{ consul_bin_dir }}/configure-consul"
-    owner: root
-    group: root
-    mode: "0755"
-  when: consul_include_configuration_script
-
-- name: install jq
-  package:
-    name: jq
-    state: present
-  when: consul_include_configuration_script

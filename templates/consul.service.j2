@@ -6,7 +6,7 @@ After=network-online.target
 [Service]
 User={{ consul_user }}
 Group={{ consul_group }}
-ExecStart={{ consul_bin_dir }}/consul agent -config-file={{ consul_conf_dir }}/config.json -config-dir={{ consul_conf_dir }}/conf.d
+ExecStart={{ consul_bin_dir }}/consul agent -config-dir={{ consul_conf_dir }}
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal={{ consul_service_stop_signal }}
 Restart=on-failure

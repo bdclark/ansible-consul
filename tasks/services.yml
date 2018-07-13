@@ -1,7 +1,7 @@
 ---
 - name: configure consul services
   copy:
-    dest: '{{ consul_conf_dir }}/conf.d/service-{{ item.key }}.json'
+    dest: '{{ consul_conf_dir }}/service-{{ item.key }}.json'
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
@@ -11,7 +11,7 @@
 
 - name: configure consul bulk services
   copy:
-    dest: "{{ consul_conf_dir }}/conf.d/services.json"
+    dest: "{{ consul_conf_dir }}/services.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
@@ -21,6 +21,6 @@
 
 - name: remove bulk services config file
   file:
-    path: "{{ consul_conf_dir }}/conf.d/services.json"
+    path: "{{ consul_conf_dir }}/services.json"
     state: absent
   when: consul_services_bulk | length == 0

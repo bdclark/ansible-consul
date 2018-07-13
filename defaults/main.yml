@@ -24,7 +24,7 @@ consul_data_dir: /var/lib/consul
 # log dir (only used with sysvinit)
 consul_log_dir: /var/log/consul
 # base dir for consul config files
-consul_conf_dir: /etc/consul
+consul_conf_dir: /etc/consul.d
 # owner of consul config dir
 consul_conf_dir_owner: root
 # mode of consul config dir
@@ -62,9 +62,6 @@ consul_services_bulk: []
 consul_checks: {}
 # array of checks to render in one file (checks.json)
 consul_checks_bulk: []
-
-# whether to install optional dynamic configuration script (will install jq)
-consul_include_configuration_script: no
 
 # consul dnsmasq settings
 consul_install_dnsmasq: false

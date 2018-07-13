@@ -1,7 +1,7 @@
 ---
 - name: configure consul checks
   copy:
-    dest: '{{ consul_conf_dir }}/conf.d/check-{{ item.key }}.json'
+    dest: '{{ consul_conf_dir }}/check-{{ item.key }}.json'
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
@@ -11,7 +11,7 @@
 
 - name: configure consul bulk checks
   copy:
-    dest: "{{ consul_conf_dir}}/conf.d/checks.json"
+    dest: "{{ consul_conf_dir}}/checks.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
@@ -21,6 +21,6 @@
 
 - name: remove bulk checks config file
   file:
-    path: "{{ consul_conf_dir }}/conf.d/checks.json"
+    path: "{{ consul_conf_dir }}/checks.json"
     state: absent
   when: consul_checks_bulk | length == 0

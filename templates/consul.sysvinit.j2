@@ -29,8 +29,7 @@ exec="{{ consul_bin_dir }}/$prog"
 pidfile="/var/run/$prog.pid"
 lockfile="/var/lock/subsys/$prog"
 logfile="{{ consul_log_dir }}/${prog}.log"
-conffile="{{ consul_conf_dir }}/config.json"
-confdir="{{ consul_conf_dir }}/conf.d"
+confdir="{{ consul_conf_dir }}"
 
 # pull in sysconfig settings
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
@@ -55,7 +54,7 @@ start() {
     daemon \
         --pidfile=$pidfile \
         --user=$user \
-        " { $exec agent -config-file=$conffile -config-dir=$confdir &>> $logfile & } ; echo \$! >| $pidfile "
+        " { $exec agent -config-dir=$confdir &>> $logfile & } ; echo \$! >| $pidfile "
 
     RETVAL=$?
     echo

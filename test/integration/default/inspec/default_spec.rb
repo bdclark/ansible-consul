@@ -1,11 +1,11 @@
 
-%w(/etc/consul /etc/consul/conf.d).each do |dir|
-  describe file(dir) do
-    it { should be_directory }
-    it { should be_owned_by('root') }
-    it { should be_grouped_into 'consul' }
-    its('mode') { should cmp '0750' }
-  end
+conf_dir = "/etc/consul.d"
+
+describe file(conf_dir) do
+  it { should be_directory }
+  it { should be_owned_by('root') }
+  it { should be_grouped_into 'consul' }
+  its('mode') { should cmp '0750' }
 end
 
 describe file('/var/lib/consul') do
@@ -15,7 +15,7 @@ describe file('/var/lib/consul') do
   its('mode') { should cmp '0750' }
 end
 
-describe file('/etc/consul/config.json') do
+describe file("#{conf_dir}/config.json") do
   it { should be_file }
   it { should be_owned_by('consul') }
   it { should be_grouped_into 'consul' }
@@ -46,24 +46,11 @@ describe command('curl -s http://localhost:8500/ui/') do
 end
 
 %w(service-foo service-bar services).each do |fname|
-  describe file("/etc/consul/conf.d/#{fname}.json") do
+  describe file("#{conf_dir}/#{fname}.json") do
     it { should be_file }
     it { should be_owned_by('consul') }
     its('mode') { should cmp '0640' }
   end
-end
-
-describe file('/usr/local/bin/configure-consul') do
-  it { should be_file }
-  it { should be_owned_by('root') }
-  its('mode') { should cmp '0755' }
-end
-
-describe command('configure-consul --dry-run --client 0.0.0.0 --server --retry-join "provider=aws"') do
-  its('stdout') { should match(%r{"data_dir": "/var/lib/consul"}) }
-  its('stdout') { should match(%r{"client_addr": "0.0.0.0"}) }
-  its('stdout') { should match(%r{"server": true}) }
-  its('stdout') { should match(%r{"retry_join": \[\n\s*"provider=aws"\n\s*\]}) }
 end
 
 describe command('curl -s http://localhost:8500/v1/agent/checks') do
