@@ -11,7 +11,7 @@
 
 - name: configure consul bulk checks
   copy:
-    dest: "{{ consul_conf_dir}}/checks.json"
+    dest: "{{ consul_conf_dir }}/checks.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640

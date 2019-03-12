@@ -1,7 +1,7 @@
 ---
 - name: update apt
   apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
   when: ansible_os_family == 'Debian'
 
@@ -35,7 +35,8 @@
 
 - name: configure dnsmasq for consul domain
   copy:
-    content: "server=/{{ consul_config.domain | default('consul') }}/{{ consul_dns_ip | default(consul_config.client_addr) }}#{{ consul_dns_port | default(8600) }}"
+    content: "server=/{{ consul_config.domain | default('consul') }}/{{ consul_dns_ip | default(consul_config.client_addr) }}\
+      #{{ consul_dns_port | default(8600) }}"
     dest: /etc/dnsmasq.d/10-consul
   notify: restart dnsmasq
 
@@ -57,4 +58,4 @@
   service:
     name: dnsmasq
     state: started
-    enabled: yes
+    enabled: true

@@ -21,7 +21,8 @@
 
 - name: configure dnsmasq for consul domain
   copy:
-    content: "server=/{{ consul_config.domain | default('consul') }}/{{ consul_dns_ip | default(consul_config.client_addr) }}#{{ consul_dns_port | default(8600) }}"
+    content: "server=/{{ consul_config.domain | default('consul') }}/{{ consul_dns_ip | default(consul_config.client_addr) }}\
+      #{{ consul_dns_port | default(8600) }}"
     dest: /etc/NetworkManager/dnsmasq.d/10-consul
   notify: restart dnsmasq
 
@@ -39,5 +40,5 @@
   service:
     name: dnsmasq
     state: stopped
-    enabled: no
+    enabled: false
   when: ansible_os_family == 'RedHat' and consul_dnsmasq_networkmanager_enabled

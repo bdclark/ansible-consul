@@ -1,7 +1,7 @@
 ---
 - name: update apt
   apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
   when: ansible_os_family == 'Debian'
 
@@ -14,7 +14,7 @@
   file:
     state: directory
     path: "{{ consul_zip_dir }}"
-    recurse: yes
+    recurse: true
 
 - name: download consul checksum file
   get_url:
@@ -33,7 +33,7 @@
     - name: import hashicorp gpg key
       command: gpg --import /etc/hashicorp.asc
       register: consul_gpg_key_imported
-      changed_when: no
+      changed_when: false
 
     - name: download consul checksum signature file
       get_url:
@@ -42,13 +42,13 @@
 
     - name: verify checksum file
       command: gpg --batch --verify {{ consul_zip_dir }}/{{ consul_signature_file }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
-      changed_when: no
+      changed_when: false
   when: consul_verify_checksum_signature | bool
 
 - name: get checksum of consul zip
-  command:  grep {{ consul_zip }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
+  command: grep {{ consul_zip }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
   register: consul_checksum
-  changed_when: no
+  changed_when: false
 
 - name: download consul zip
   get_url:
@@ -62,14 +62,17 @@
     path: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
     owner: root
     group: root
-    recurse: yes
+    recurse: true
 
 - name: extract consul zip
   unarchive:
     src: "{{ consul_zip_dir }}/{{ consul_zip }}"
     dest: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
-    copy: no
+    copy: false
     creates: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+    owner: root
+    group: root
+    mode: 0755
   notify: restart consul
 
 - name: symlink consul binary
