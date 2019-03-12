@@ -15,16 +15,19 @@ describe file('/var/lib/consul') do
   its('mode') { should cmp '0750' }
 end
 
+describe json("#{conf_dir}/config.json") do
+  its(['data_dir']) { should eq ('/var/lib/consul') }
+  its(['datacenter']) { should eq ('dev') }
+  its(['bootstrap_expect']) { should eq (1) }
+  its(['ui']) { should eq (true) }
+  its(['acl_token']) { should eq ('secret_agent') }
+end
+
 describe file("#{conf_dir}/config.json") do
   it { should be_file }
   it { should be_owned_by('consul') }
   it { should be_grouped_into 'consul' }
   its('mode') { should cmp '0640' }
-  its('content') { should include('"data_dir": "/var/lib/consul"') }
-  its('content') { should include('"datacenter": "dev"') }
-  its('content') { should include('"bootstrap_expect": 1') }
-  its('content') { should include('"ui": true') }
-  its('content') { should include('"acl_token": "secret_agent"') }
   its('content') { should_not include('ca_file') }
   its('content') { should_not include('cert_file') }
   its('content') { should_not include('key_file') }
@@ -77,16 +80,10 @@ describe command('curl -s http://localhost:8500/v1/catalog/service/bulk-bar') do
   its('stdout') { should include('"ServicePort":4444') }
 end
 
-dns_server = '127.0.0.1' if os[:family] == 'redhat' && os[:release].to_i == 6
-
-describe command("host foo.service.consul #{dns_server}") do
-  its('stdout') { should match(/^foo.service.consul has address 1.1.1.1/) }
+describe command("dig foo.service.consul @127.0.0.1 -p 8600") do
+  its('stdout') { should match(/^foo.service.consul.\s0	IN\sA\s1.1.1.1/) }
 end
 
-describe command("host -t SRV foo.service.consul #{dns_server}") do
-  its('stdout') { should match(/^foo.service.consul has SRV record 1 1 1111/) }
-end
-
-describe port(53) do
-  it { should be_listening }
+describe command("dig -t SRV foo.service.consul @127.0.0.1 -p 8600") do
+  its('stdout') { should match(/^foo.service.consul.\s0\sIN\sSRV\s1\s1\s1111/) }
 end

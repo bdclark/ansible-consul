@@ -44,6 +44,6 @@ suites:
   - name: default
     provisioner:
       playbook: test/integration/default/playbook.yml
-  - name: repo
+  - name: tls
     provisioner:
       playbook: test/integration/tls/playbook.yml

@@ -1,10 +1,7 @@
 ---
 - hosts: all
   become: true
-
   vars:
-    # consul_install_dnsmasq: true
-    # consul_dnsmasq_networkmanager_enabled: "{{ ansible_os_family == 'RedHat' and ansible_distribution_version | version_compare('7.0', '>=') }}"
     consul_config:
       bootstrap_expect: 1
       datacenter: dev
@@ -32,16 +29,11 @@
         timeout: 1s
   roles:
     - role: consul
-
-  pre_tasks:
-    - package:
-        name: libselinux-python
-      when: ansible_os_family == 'RedHat'
-
   tasks:
-    - package:
-        name: "{{ item }}"
+    - name: install test dependencies
+      package:
+        name:
+          - curl
+          - net-tools
+          - "{{ 'dnsutils' if ansible_os_family == 'Debian' else 'bind-utils' }}"
         state: present
-      with_items:
-        - curl
-        - "{{ 'bind9-host' if ansible_os_family == 'Debian' else 'bind-utils' }}"
