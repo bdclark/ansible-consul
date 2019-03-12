@@ -4,8 +4,6 @@
 
 Ansible role to install and configure [Consul][1] agent (client and server).
 
-Also optionally installs dnmasq for consul dns domain forwarding.
-
 Role Variables
 --------------
 
@@ -38,8 +36,6 @@ Example Playbooks/Snippets
 - hosts: app_servers
   become: true
   vars:
-    # install dnsmasq for consul dns domain forwarding
-    consul_install_dnsmasq: true
     # agent options
     consul_config:
       leave_on_terminate: true
