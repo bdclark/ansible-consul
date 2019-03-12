@@ -1,5 +1,7 @@
 # Ansible Consul Role
 
+[![Build Status](https://travis-ci.org/bdclark/ansible-consul.svg?branch=master)](https://travis-ci.org/bdclark/ansible-consul)
+
 Ansible role to install and configure [Consul][1] agent (client and server).
 
 Also optionally installs dnmasq for consul dns domain forwarding.
