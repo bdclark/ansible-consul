@@ -1,5 +1,6 @@
 [Unit]
-Description=Consul
+Description="HashiCorp Consul"
+Documentation=https://www.consul.io/
 Requires=network-online.target
 After=network-online.target
 
@@ -7,9 +8,14 @@ After=network-online.target
 User={{ consul_user }}
 Group={{ consul_group }}
 ExecStart={{ consul_bin_dir }}/consul agent -config-dir={{ consul_conf_dir }}
-ExecReload=/bin/kill -HUP $MAINPID
+ExecReload={{ consul_bin_dir }}/consul reload
+KillMode=process
 KillSignal={{ consul_service_stop_signal }}
 Restart=on-failure
+LimitNOFILE=65536
+{% if consul_allow_privileged_ports %}
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target

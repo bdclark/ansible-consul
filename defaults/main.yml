@@ -21,8 +21,6 @@ consul_zip_dir: /tmp
 consul_bin_dir: /usr/local/bin
 # consul data dir
 consul_data_dir: /var/lib/consul
-# log dir (only used with sysvinit)
-consul_log_dir: /var/log/consul
 # base dir for consul config files
 consul_conf_dir: /etc/consul.d
 # owner of consul config dir
@@ -42,15 +40,15 @@ consul_service_state: started
 # restart on config file/service changes
 consul_service_restart_on_update: true
 # signal to send when service stops
-consul_service_stop_signal: INT
+consul_service_stop_signal: SIGTERM
+# whether consul should be allowed to allow privileged ports via CAP_NET_BIND_SERVICE in systemd unit
+# defaults to false, unless DNS port is enabled and < 1024 in consul_config['ports']
+consul_allow_privileged_ports: "{{ consul_config.ports.dns|default(8600)|int < 1024 and consul_config.ports.dns|default(8600)|int != -1 }}"
 
 # if set, will render tls/consul.crt, tls/consul.key, tls/ca.crt in consul_conf_dir
 consul_cert_content: ~
 consul_key_content: ~
 consul_ca_content: ~
-
-# consul init method; can be upstart, systemd, sysvinit, or null to auto-detect
-consul_init_method: ~
 
 # config settings passed to config.json conf file
 consul_config: {}

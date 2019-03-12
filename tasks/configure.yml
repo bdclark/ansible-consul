@@ -88,18 +88,6 @@
     mode: "0600"
   when: consul_ca_content is not none
 
-- name: upstart init script
-  template:
-    src: "{{ consul_upstart_template }}"
-    dest: /etc/init/consul.conf
-    owner: root
-    group: root
-    mode: "0644"
-  when: consul_init_method == 'upstart' or (consul_init_method is none and ansible_os_family == 'Debian' and ansible_service_mgr == 'upstart')
-  register: consul_init_upstart
-  notify:
-    - restart consul
-
 - name: systemd init script
   template:
     src: "{{ consul_systemd_template }}"
@@ -107,30 +95,6 @@
     owner: root
     group: root
     mode: "0644"
-  when: consul_init_method == 'systemd' or (consul_init_method is none and ansible_service_mgr == 'systemd')
-  register: consul_init_systemd
   notify:
     - reload systemd
     - restart consul
-
-- name: sysv init script
-  template:
-    src: "{{ consul_sysvinit_template }}"
-    dest: /etc/init.d/consul
-    owner: root
-    group: root
-    mode: "0755"
-  when: consul_init_method == 'sysvinit' or (consul_init_upstart|skipped and consul_init_systemd|skipped)
-  register: consul_init_sysvinit
-  notify:
-    - restart consul
-
-- name: create log directory
-  file:
-    state: directory
-    path: "{{ consul_log_dir }}"
-    owner: "{{ consul_user }}"
-    group: "{{ consul_group }}"
-    mode: "0755"
-    recurse: true
-  when: falset consul_init_sysvinit|skipped
