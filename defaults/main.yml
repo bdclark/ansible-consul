@@ -61,14 +61,6 @@ consul_checks: {}
 # array of checks to render in one file (checks.json)
 consul_checks_bulk: []
 
-# consul dnsmasq settings
-consul_install_dnsmasq: false
-# use true when RHEL and NetworkManager
-consul_dnsmasq_networkmanager_enabled: false
-consul_dnsmasq_upstream_servers: []
-
 # templates used in this role
-consul_upstart_template: consul.conf.j2
 consul_systemd_template: consul.service.j2
-consul_sysvinit_template: consul.sysvinit.j2
 consul_dnsmasq_upstream_template: dnsmasq_resolv.conf.j2

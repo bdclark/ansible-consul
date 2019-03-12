@@ -14,14 +14,3 @@
     name: consul
     state: reloaded
   when: consul_service_enabled and consul_service_state == 'started'
-
-- name: restart dnsmasq
-  service:
-    name: dnsmasq
-    state: restarted
-  when: not (ansible_os_family == 'RedHat' and consul_dnsmasq_networkmanager_enabled)
-
-- name: restart networkmanager
-  service:
-    name: NetworkManager
-    state: restarted

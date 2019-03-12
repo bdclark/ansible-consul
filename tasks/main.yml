@@ -3,12 +3,6 @@
 
 - include: configure.yml
 
-- include: dnsmasq.yml
-  when: consul_install_dnsmasq and not consul_dnsmasq_networkmanager_enabled
-
-- include: dnsmasq_netman.yml
-  when: consul_install_dnsmasq and consul_dnsmasq_networkmanager_enabled
-
 - name: manage consul service
   service:
     name: consul
