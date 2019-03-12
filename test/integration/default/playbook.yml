@@ -3,8 +3,8 @@
   become: true
 
   vars:
-    consul_install_dnsmasq: true
-    consul_dnsmasq_networkmanager_enabled: "{{ ansible_os_family == 'RedHat' and ansible_distribution_version | version_compare('7.0', '>=') }}"
+    # consul_install_dnsmasq: true
+    # consul_dnsmasq_networkmanager_enabled: "{{ ansible_os_family == 'RedHat' and ansible_distribution_version | version_compare('7.0', '>=') }}"
     consul_config:
       bootstrap_expect: 1
       datacenter: dev

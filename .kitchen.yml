@@ -1,6 +1,17 @@
 ---
 driver:
-  name: vagrant
+  name: docker
+  use_sudo: false
+  require_chef_omnibus: false
+  cap_add:
+    - SYS_ADMIN
+  run_options:
+    tmpfs:
+      - /run
+      - /run/lock
+    volume:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    stop-signal: SIGRTMIN+3
 
 provisioner:
   name: ansible_push
@@ -13,14 +24,18 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-14.04
+  - name: ubuntu-18.04
+    driver_config:
+      image: bdclark/ubuntu-1804-test:latest
+      run_command: /lib/systemd/systemd
   - name: ubuntu-16.04
-  - name: centos-6.7
-    provisioner:
-      extra_vars:
-        consul_dnsmasq_upstream_servers:
-          - 8.8.8.8
-  - name: centos-7.2
+    driver_config:
+      image: bdclark/ubuntu-1604-test:latest
+      run_command: /lib/systemd/systemd
+  - name: centos-7
+    driver_config:
+      image: bdclark/centos-7-test:latest
+      run_command: /lib/systemd/systemd
     provisioner:
       extra_vars:
       consul_dnsmasq_networkmanager_enabled: true
@@ -28,7 +43,7 @@ platforms:
 suites:
   - name: default
     provisioner:
-      playbook: test/playbooks/default.yml
-  - name: tls
+      playbook: test/integration/default/playbook.yml
+  - name: repo
     provisioner:
-      playbook: test/playbooks/tls.yml
+      playbook: test/integration/tls/playbook.yml
