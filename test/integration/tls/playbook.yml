@@ -88,3 +88,9 @@
           - curl
           - net-tools
         state: present
+    - name: flush handlers
+      meta: flush_handlers
+    - name: wait for leader
+      wait_for:
+        port: 8501
+        delay: 40

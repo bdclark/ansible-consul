@@ -37,3 +37,17 @@
           - net-tools
           - "{{ 'dnsutils' if ansible_os_family == 'Debian' else 'bind-utils' }}"
         state: present
+    - name: flush handlers
+      meta: flush_handlers
+    - name: wait for leader
+      uri:
+        url: http://127.0.0.1:8500/v1/status/leader
+        status_code: 200
+        return_content: true
+      register: result
+      until: "'8300' in result.content"
+      retries: 10
+      delay: 4
+    - name: pause for service registration
+      pause:
+        seconds: 5
