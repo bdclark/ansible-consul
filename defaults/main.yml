@@ -1,6 +1,6 @@
 ---
 # version to install
-consul_version: 1.4.3
+consul_version: 1.5.1
 
 # zip name/url
 consul_zip: "consul_{{ consul_version }}_linux_amd64.zip"
