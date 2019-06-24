@@ -1,0 +1,11 @@
+{% set services = [] %}
+{% for service in consul_services_bulk %}
+{% if service.port is defined %}
+{% set service = service|combine({'port': service.port|int}) %}
+{% endif %}
+{% if service.weights is defined %}
+{% set service = service|combine({'weights':{'passing': service.weights.passing|default(1)|int, 'warning': service.weights.warning|default(1)|int}}) %}
+{% endif %}
+{{- services.append(service) -}}
+{% endfor %}
+{{ {'services': services} | to_nice_json }}

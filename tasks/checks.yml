@@ -6,7 +6,7 @@
     group: "{{ consul_group }}"
     mode: 0640
     content: "{{ { 'check': { 'name': item.value.name|default(item.key) } | combine(item.value) } | to_nice_json }}"
-  with_dict: "{{ consul_checks }}"
+  with_dict: "{{ consul_checks | combine(consul_checks_group, recursive=true) | combine(consul_checks_host, recursive=true) }}"
   notify: reload consul
 
 - name: configure consul bulk checks

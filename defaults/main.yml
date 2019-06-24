@@ -52,15 +52,24 @@ consul_ca_content: ~
 
 # config settings passed to config.json conf file
 consul_config: {}
+
 # dict of individual consul service files to render
+# can optionally provide group and host services if desired (all will be combined)
 consul_services: {}
+consul_services_group: {}
+consul_services_host: {}
+
 # array of services to render in one file (services.json)
 consul_services_bulk: []
+
 # dict of individual checks files to render
+# can optionally provide group and host checks if desired (all will be combined)
 consul_checks: {}
+consul_checks_group: {}
+consul_checks_host: {}
+
 # array of checks to render in one file (checks.json)
 consul_checks_bulk: []
 
 # templates used in this role
 consul_systemd_template: consul.service.j2
-consul_dnsmasq_upstream_template: dnsmasq_resolv.conf.j2

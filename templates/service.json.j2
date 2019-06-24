@@ -1,0 +1,8 @@
+{% set service = item.value %}
+{% if service.port is defined %}
+{% set service = service|combine({'port': service.port|int}) %}
+{% endif %}
+{% if service.weights is defined %}
+{% set service = service|combine({'weights':{'passing': service.weights.passing|default(1)|int, 'warning': service.weights.warning|default(1)|int}}) %}
+{% endif %}
+{{ { 'service': { 'name': service.name|default(item.key) } | combine(service) } | to_nice_json }}

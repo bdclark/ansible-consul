@@ -12,9 +12,16 @@
       foo:
         address: 1.1.1.1
         port: 1111
+    consul_services_group:
       bar:
         address: 2.2.2.2
         port: 2222
+    consul_services_host:
+      baz:
+        address: 5.5.5.5
+        port: "5555"
+        weights:
+          passing: "2"
     consul_services_bulk:
       - name: bulk-foo
         address: 3.3.3.3

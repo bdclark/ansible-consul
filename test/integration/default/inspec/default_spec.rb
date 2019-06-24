@@ -48,7 +48,7 @@ describe command('curl -s http://localhost:8500/ui/') do
   its(:stdout) { should match('<title>Consul by HashiCorp</title>') }
 end
 
-%w(service-foo service-bar services).each do |fname|
+%w(service-foo service-bar service-baz services).each do |fname|
   describe file("#{conf_dir}/#{fname}.json") do
     it { should be_file }
     it { should be_owned_by('consul') }
@@ -56,34 +56,41 @@ end
   end
 end
 
-describe command('curl -s http://localhost:8500/v1/agent/checks') do
-  its('stdout') { should match(/"ssh":{.*"Name":"ssh".*}$/) }
+describe json(command: 'curl -s http://localhost:8500/v1/agent/checks') do
+  its(%w(ssh Name)) { should eq 'ssh' }
 end
 
-describe command('curl -s http://localhost:8500/v1/catalog/service/foo') do
-  its('stdout') { should include('"ServiceAddress":"1.1.1.1"') }
-  its('stdout') { should include('"ServicePort":1111') }
+describe json(command: 'curl -s http://localhost:8500/v1/catalog/service/foo') do
+  its([0, 'ServiceAddress']) { should eq '1.1.1.1' }
+  its([0, 'ServicePort']) { should eq 1111 }
 end
 
-describe command('curl -s http://localhost:8500/v1/catalog/service/bar') do
-  its('stdout') { should include('"ServiceAddress":"2.2.2.2"') }
-  its('stdout') { should include('"ServicePort":2222') }
+describe json(command: 'curl -s http://localhost:8500/v1/catalog/service/bar') do
+  its([0, 'ServiceAddress']) { should eq '2.2.2.2' }
+  its([0, 'ServicePort']) { should eq 2222 }
 end
 
-describe command('curl -s http://localhost:8500/v1/catalog/service/bulk-foo') do
-  its('stdout') { should include('"ServiceAddress":"3.3.3.3"') }
-  its('stdout') { should include('"ServicePort":3333') }
+describe json(command: 'curl -s http://localhost:8500/v1/catalog/service/bulk-foo') do
+  its([0, 'ServiceAddress']) { should eq '3.3.3.3' }
+  its([0, 'ServicePort']) { should eq 3333 }
 end
 
-describe command('curl -s http://localhost:8500/v1/catalog/service/bulk-bar') do
-  its('stdout') { should include('"ServiceAddress":"4.4.4.4"') }
-  its('stdout') { should include('"ServicePort":4444') }
+describe json(command: 'curl -s http://localhost:8500/v1/catalog/service/bulk-bar') do
+  its([0, 'ServiceAddress']) { should eq '4.4.4.4' }
+  its([0, 'ServicePort']) { should eq 4444 }
 end
 
-describe command("dig foo.service.consul @127.0.0.1 -p 8600") do
+describe json(command: 'curl -s http://localhost:8500/v1/catalog/service/baz') do
+  its([0, 'ServiceAddress']) { should eq '5.5.5.5' }
+  its([0, 'ServicePort']) { should eq 5555 }
+  its([0, 'ServiceWeights', 'Passing']) { should eq 2 }
+  its([0, 'ServiceWeights', 'Warning']) { should eq 1 }
+end
+
+describe command('dig foo.service.consul @127.0.0.1 -p 8600') do
   its('stdout') { should match(/^foo.service.consul.\s0	IN\sA\s1.1.1.1/) }
 end
 
-describe command("dig -t SRV foo.service.consul @127.0.0.1 -p 8600") do
+describe command('dig -t SRV foo.service.consul @127.0.0.1 -p 8600') do
   its('stdout') { should match(/^foo.service.consul.\s0\sIN\sSRV\s1\s1\s1111/) }
 end
