@@ -7,10 +7,12 @@
   service:
     name: consul
     state: restarted
-  when: consul_service_restart_on_update and consul_service_enabled and consul_service_state == 'started'
+  when: consul_service_restart_on_update | bool
+    and consul_service_enabled | bool
+    and consul_service_state == 'started'
 
 - name: reload consul
   service:
     name: consul
     state: reloaded
-  when: consul_service_enabled and consul_service_state == 'started'
+  when: consul_service_enabled | bool and consul_service_state == 'started'

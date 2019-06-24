@@ -19,7 +19,7 @@
   group:
     name: "{{ consul_group }}"
     system: true
-  when: consul_user_managed
+  when: consul_user_managed | bool
 
 - name: create service user
   user:
@@ -29,7 +29,7 @@
     system: true
     shell: /bin/false
     comment: Consul service user
-  when: consul_user_managed
+  when: consul_user_managed | bool
 
 - name: create conf directory
   file:
