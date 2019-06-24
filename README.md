@@ -4,6 +4,17 @@
 
 Ansible role to install and configure [Consul][1] agent (client and server).
 
+Requirements
+------------
+This role is being tested with Ansible 2.6, 2.7, and 2.8 on the following operating systems:
+
+- Ubuntu-18.04
+- Ubuntu-16.04
+- Centos-7x
+- Amazon Linux 2
+
+Other versions or distributions may work, YMMV.
+
 Role Variables
 --------------
 

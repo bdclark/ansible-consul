@@ -1,15 +1,19 @@
 ---
-language: ruby
+language: python
 services: docker
 dist: xenial
+python:
+  - "2.7"
+  - "3.7"
 
 env:
   global:
-    - ROLE_NAME: consul
-    - REPO_NAME: "ansible-${ROLE_NAME}"
+    - ROLE_NAME=consul
+    - REPO_NAME=ansible-${ROLE_NAME}
   matrix:
-    - ANSIBLE_VERSION: '2.5'
-    - ANSIBLE_VERSION: '2.7'
+    - ANSIBLE_VERSION=2.6
+    - ANSIBLE_VERSION=2.7
+    - ANSIBLE_VERSION=2.8
 
 before_install:
   # project directory must match role name

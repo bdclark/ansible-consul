@@ -5,6 +5,7 @@ driver:
   require_chef_omnibus: false
   cap_add:
     - SYS_ADMIN
+  run_command: /lib/systemd/systemd
   run_options:
     tmpfs:
       - /run
@@ -27,18 +28,15 @@ platforms:
   - name: ubuntu-18.04
     driver_config:
       image: bdclark/ubuntu-1804-test:latest
-      run_command: /lib/systemd/systemd
   - name: ubuntu-16.04
     driver_config:
       image: bdclark/ubuntu-1604-test:latest
-      run_command: /lib/systemd/systemd
+  - name: amazonlinux-2
+    driver_config:
+      image: bdclark/amazonlinux-2-test:latest
   - name: centos-7
     driver_config:
       image: bdclark/centos-7-test:latest
-      run_command: /lib/systemd/systemd
-    provisioner:
-      extra_vars:
-      consul_dnsmasq_networkmanager_enabled: true
 
 suites:
   - name: default
@@ -47,3 +45,5 @@ suites:
   - name: tls
     provisioner:
       playbook: test/integration/tls/playbook.yml
+    includes:
+      - ubuntu-18.04
