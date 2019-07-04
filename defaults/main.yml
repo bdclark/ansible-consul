@@ -72,4 +72,7 @@ consul_checks_host: {}
 consul_checks_bulk: []
 
 # templates used in this role
+consul_config_template: config.json.j2
 consul_systemd_template: consul.service.j2
+consul_service_template: service.json.j2
+consul_bulk_services_template: services.json.j2

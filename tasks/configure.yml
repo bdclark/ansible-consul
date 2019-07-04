@@ -48,9 +48,8 @@
     mode: "0750"
 
 - name: write config file
-  no_log: true
-  copy:
-    content: "{{ consul_config | to_nice_json }}"
+  template:
+    src: "{{ consul_config_template }}"
     dest: "{{ consul_conf_dir }}/config.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"

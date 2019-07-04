@@ -1,7 +1,7 @@
 ---
 - name: configure consul services
   template:
-    src: service.json.j2
+    src: "{{ consul_service_template }}"
     dest: '{{ consul_conf_dir }}/service-{{ item.key }}.json'
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
@@ -11,7 +11,7 @@
 
 - name: configure consul bulk services
   template:
-    src: services.json.j2
+    src: "{{ consul_bulk_services_template }}"
     dest: "{{ consul_conf_dir }}/services.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"

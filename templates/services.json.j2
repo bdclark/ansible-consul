@@ -8,4 +8,4 @@
 {% endif %}
 {{- services.append(service) -}}
 {% endfor %}
-{{ {'services': services} | to_nice_json }}
+{{ {'services': services} | to_nice_json(indent=2) }}

@@ -5,7 +5,7 @@
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
-    content: "{{ { 'check': { 'name': item.value.name|default(item.key) } | combine(item.value) } | to_nice_json }}"
+    content: "{{ { 'check': { 'name': item.value.name|default(item.key) } | combine(item.value) } | to_nice_json(indent=2) }}\n"
   with_dict: "{{ consul_checks | combine(consul_checks_group, recursive=true) | combine(consul_checks_host, recursive=true) }}"
   notify: reload consul
 
@@ -15,7 +15,7 @@
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
     mode: 0640
-    content: "{{ { 'checks': consul_checks_bulk } | to_nice_json }}"
+    content: "{{ { 'checks': consul_checks_bulk } | to_nice_json(indent=2) }}\n"
   when: consul_checks_bulk | length > 0
   notify: reload consul
 
