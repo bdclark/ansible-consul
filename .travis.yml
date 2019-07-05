@@ -3,7 +3,7 @@ language: python
 services: docker
 dist: xenial
 python:
-  - "2.7"
+  # - "2.7"
   - "3.7"
 
 env:

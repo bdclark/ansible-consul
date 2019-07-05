@@ -1,16 +1,19 @@
 ---
 - include: install.yml
 
-- include: configure.yml
+- block:
+    - include: configure.yml
 
-- name: manage consul service
-  service:
-    name: consul
-    state: "{{ consul_service_state }}"
-    enabled: "{{ consul_service_enabled }}"
+    - name: manage consul service
+      service:
+        name: consul
+        state: "{{ consul_service_state }}"
+        enabled: "{{ consul_service_enabled }}"
 
-- include: services.yml
-  when: consul_services|length > 0 or consul_services_bulk|length > 0
+    - include: services.yml
+      when: consul_services|length > 0 or consul_services_bulk|length > 0
 
-- include: checks.yml
-  when: consul_checks|length > 0 or consul_checks_bulk |length > 0
+    - include: checks.yml
+      when: consul_checks|length > 0 or consul_checks_bulk |length > 0
+
+  when: not consul_install_only | bool

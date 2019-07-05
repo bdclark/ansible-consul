@@ -15,6 +15,9 @@ consul_verify_checksum_signature: true
 consul_signature_file: "{{ consul_checksum_file }}.sig"
 consul_signature_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_signature_file }}"
 
+# only install consul binary (skip all other configuration)
+consul_install_only: false
+
 # path to download consul zip file before extraction
 consul_zip_dir: /tmp
 # dir to extract consul binary
