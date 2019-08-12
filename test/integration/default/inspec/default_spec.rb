@@ -1,5 +1,4 @@
-
-conf_dir = "/etc/consul.d"
+conf_dir = '/etc/consul.d'
 
 describe file(conf_dir) do
   it { should be_directory }
@@ -16,11 +15,11 @@ describe file('/var/lib/consul') do
 end
 
 describe json("#{conf_dir}/config.json") do
-  its(['data_dir']) { should eq ('/var/lib/consul') }
-  its(['datacenter']) { should eq ('dev') }
-  its(['bootstrap_expect']) { should eq (1) }
-  its(['ui']) { should eq (true) }
-  its(['acl_token']) { should eq ('secret_agent') }
+  its(['data_dir']) { should eq '/var/lib/consul' }
+  its(['datacenter']) { should eq 'dev' }
+  its(['bootstrap_expect']) { should eq 1 }
+  its(['ui']) { should eq true }
+  its(['acl_token']) { should eq 'secret_agent' }
 end
 
 describe file("#{conf_dir}/config.json") do
@@ -48,7 +47,7 @@ describe command('curl -s http://localhost:8500/ui/') do
   its(:stdout) { should match('<title>Consul by HashiCorp</title>') }
 end
 
-%w(service-foo service-bar service-baz services).each do |fname|
+%w[service-foo service-bar service-baz services].each do |fname|
   describe file("#{conf_dir}/#{fname}.json") do
     it { should be_file }
     it { should be_owned_by('consul') }
@@ -57,7 +56,7 @@ end
 end
 
 describe json(command: 'curl -s http://localhost:8500/v1/agent/checks') do
-  its(%w(ssh Name)) { should eq 'ssh' }
+  its(%w[ssh Name]) { should eq 'ssh' }
 end
 
 describe json(command: 'curl -s http://localhost:8500/v1/catalog/service/foo') do
