@@ -53,27 +53,27 @@
     recurse: true
 
 - block:
-  - name: download consul zip
-    get_url:
-      url: "{{ consul_zip_url }}"
-      dest: "{{ consul_zip_dir }}/{{ consul_zip }}"
-      checksum: "sha256:{{ consul_checksum.stdout.split(' ') | first }}"
+    - name: download consul zip
+      get_url:
+        url: "{{ consul_zip_url }}"
+        dest: "{{ consul_zip_dir }}/{{ consul_zip }}"
+        checksum: "sha256:{{ consul_checksum.stdout.split(' ') | first }}"
 
-  - name: extract consul zip
-    unarchive:
-      src: "{{ consul_zip_dir }}/{{ consul_zip }}"
-      dest: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
-      copy: false
-      creates: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
-      owner: root
-      group: root
-      mode: 0755
-    notify: restart consul
+    - name: extract consul zip
+      unarchive:
+        src: "{{ consul_zip_dir }}/{{ consul_zip }}"
+        dest: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
+        copy: false
+        creates: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+        owner: root
+        group: root
+        mode: 0755
+      notify: restart consul
 
-  - name: symlink consul binary
-    file:
-      state: link
-      src: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
-      dest: "{{ consul_bin_dir }}/consul"
-    notify: restart consul
+    - name: symlink consul binary
+      file:
+        state: link
+        src: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+        dest: "{{ consul_bin_dir }}/consul"
+      notify: restart consul
   when: not ansible_check_mode
