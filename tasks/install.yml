@@ -4,16 +4,22 @@
     name: unzip
     state: present
 
-- name: ensure consul download directory
+- name: update installation directory with version
+  set_fact:
+    consul_install_dir: "{{ consul_install_dir }}/{{ consul_version }}"
+
+- name: ensure consul directories
   file:
     state: directory
-    path: "{{ consul_zip_dir }}"
-    recurse: true
+    path: "{{ item }}"
+  with_items:
+    - "{{ consul_install_dir }}"
+    - "{{ consul_bin_dir }}"
 
 - name: download consul checksum file
   get_url:
     url: "{{ consul_checksum_url }}"
-    dest: "{{ consul_zip_dir }}/{{ consul_checksum_file }}"
+    dest: "{{ consul_install_dir }}/{{ consul_checksum_file }}"
 
 - block:
     - name: write hashicorp gpg key file
@@ -32,39 +38,31 @@
     - name: download consul checksum signature file
       get_url:
         url: "{{ consul_signature_url }}"
-        dest: "{{ consul_zip_dir }}/{{ consul_signature_file }}"
+        dest: "{{ consul_install_dir }}/{{ consul_signature_file }}"
 
     - name: verify checksum file
-      command: gpg --batch --verify {{ consul_zip_dir }}/{{ consul_signature_file }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
+      command: gpg --batch --verify {{ consul_install_dir }}/{{ consul_signature_file }} {{ consul_install_dir }}/{{ consul_checksum_file }}
       changed_when: false
   when: consul_verify_checksum_signature | bool
 
 - name: get checksum of consul zip
-  command: grep {{ consul_zip }} {{ consul_zip_dir }}/{{ consul_checksum_file }}
+  command: grep {{ consul_zip }} {{ consul_install_dir }}/{{ consul_checksum_file }}
   register: consul_checksum
   changed_when: false
-
-- name: create consul binary directory
-  file:
-    state: directory
-    path: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
-    owner: root
-    group: root
-    recurse: true
 
 - block:
     - name: download consul zip
       get_url:
         url: "{{ consul_zip_url }}"
-        dest: "{{ consul_zip_dir }}/{{ consul_zip }}"
+        dest: "{{ consul_install_dir }}/{{ consul_zip }}"
         checksum: "sha256:{{ consul_checksum.stdout.split(' ') | first }}"
 
     - name: extract consul zip
       unarchive:
-        src: "{{ consul_zip_dir }}/{{ consul_zip }}"
-        dest: "{{ consul_bin_dir }}/consul-{{ consul_version }}"
-        copy: false
-        creates: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+        src: "{{ consul_install_dir }}/{{ consul_zip }}"
+        dest: "{{ consul_install_dir }}"
+        remote_src: true
+        creates: "{{ consul_install_dir }}/consul"
         owner: root
         group: root
         mode: 0755
@@ -73,7 +71,7 @@
     - name: symlink consul binary
       file:
         state: link
-        src: "{{ consul_bin_dir }}/consul-{{ consul_version }}/consul"
+        src: "{{ consul_install_dir }}/consul"
         dest: "{{ consul_bin_dir }}/consul"
       notify: restart consul
   when: not ansible_check_mode

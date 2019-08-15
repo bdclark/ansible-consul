@@ -18,17 +18,17 @@ consul_signature_url: "https://releases.hashicorp.com/consul/{{ consul_version }
 # only install consul binary (skip all other configuration)
 consul_install_only: false
 
-# path to download consul zip file before extraction
-consul_zip_dir: /tmp
-# dir to extract consul binary
+# installation directory (version-specific sub-directory will be added)
+consul_install_dir: /usr/local/consul
+# directory to extract consul binary
 consul_bin_dir: /usr/local/bin
-# consul data dir
+# consul data directory
 consul_data_dir: /var/lib/consul
-# base dir for consul config files
+# base directory for consul config files
 consul_conf_dir: /etc/consul.d
-# owner of consul config dir
+# owner of consul config directory
 consul_conf_dir_owner: root
-# mode of consul config dir
+# mode of consul config directory
 consul_conf_dir_mode: "0750"
 
 # if true will create/manage consul_user and consul_group
