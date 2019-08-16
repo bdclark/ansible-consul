@@ -18,8 +18,8 @@ consul_signature_url: "https://releases.hashicorp.com/consul/{{ consul_version }
 # only install consul binary (skip all other configuration)
 consul_install_only: false
 
-# installation directory (version-specific sub-directory will be added)
-consul_install_dir: /usr/local/consul
+# installation directory (recommended to be version-specific)
+consul_install_dir: /usr/local/consul/{{ consul_version }}
 # directory to extract consul binary
 consul_bin_dir: /usr/local/bin
 # consul data directory

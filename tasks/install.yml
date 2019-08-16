@@ -4,10 +4,6 @@
     name: unzip
     state: present
 
-- name: update installation directory with version
-  set_fact:
-    consul_install_dir: "{{ consul_install_dir }}/{{ consul_version }}"
-
 - name: ensure consul directories
   file:
     state: directory
