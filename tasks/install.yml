@@ -44,6 +44,7 @@
 - name: get checksum of consul zip
   command: grep {{ consul_zip }} {{ consul_install_dir }}/{{ consul_checksum_file }}
   register: consul_checksum
+  check_mode: false
   changed_when: false
 
 - name: download consul zip
